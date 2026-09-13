@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureBank | Portal Login</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div id="toast-container"></div>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <a href="index.html" class="auth-logo">🛡️ Secure<span>Bank</span></a>
+        <p class="auth-subtitle">Institutional & Retail Digital Banking Gateway</p>
+      </div>
+
+      <!-- Role Tabs -->
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="tab-customer" onclick="switchLoginTab('CUSTOMER')">
+          👤 Retail Customer
+        </button>
+        <button type="button" class="auth-tab" id="tab-admin" onclick="switchLoginTab('ADMIN')">
+          🛡️ Bank Administrator
+        </button>
+      </div>
+
+      <!-- Login Form -->
+      <div class="auth-body">
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+          <div class="form-group">
+            <label for="email" id="login-label">Customer Email Address</label>
+            <input type="text" id="email" class="form-control" placeholder="e.g. alice@securebank.com" required autocomplete="username">
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
+          </div>
+
+          <button type="submit" id="loginBtn" class="btn btn-primary btn-block" style="margin-top: 12px;">
+            Secure Sign In
+          </button>
+        </form>
+      </div>
+
+      <div class="auth-footer">
+        <span id="footer-link-text">Don't have an active bank account?</span> 
+        <a href="register.html" style="font-weight: 600;">Open Account Now</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js?v=2.5"></script>
+  <script src="js/auth.js?v=2.5"></script>
+  <script>
+    let currentRole = 'CUSTOMER';
+
+    function switchLoginTab(role) {
+      currentRole = role;
+      const tabCust = document.getElementById('tab-customer');
+      const tabAdm = document.getElementById('tab-admin');
+      const label = document.getElementById('login-label');
+      const emailInput = document.getElementById('email');
+
+      if (role === 'CUSTOMER') {
+        tabCust.classList.add('active');
+        tabAdm.classList.remove('active');
+        label.innerText = 'Customer Email Address';
+        emailInput.placeholder = 'e.g. alice@securebank.com';
+      } else {
+        tabAdm.classList.add('active');
+        tabCust.classList.remove('active');
+        label.innerText = 'Admin Username or Email';
+        emailInput.placeholder = 'e.g. superadmin';
+      }
+    }
+  </script>
+</body>
+</html>

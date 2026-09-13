@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureBank | Admin Management Suite</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .metric-card {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+    .metric-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+    .metric-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary-900);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="toast-container"></div>
+
+  <div class="dashboard-layout">
+    <!-- Admin Sidebar -->
+    <aside class="sidebar" style="background-color: #0b1120;">
+      <div class="sidebar-header">
+        🛡️ Secure<span>Bank</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="javascript:void(0)" onclick="switchAdminTab('dashboard')" id="nav-dashboard" class="nav-item active">📊 Dashboard</a>
+        <a href="javascript:void(0)" onclick="switchAdminTab('customers')" id="nav-customers" class="nav-item">👥 Customers</a>
+        <a href="javascript:void(0)" onclick="switchAdminTab('accounts')" id="nav-accounts" class="nav-item">🏦 Accounts</a>
+        <a href="javascript:void(0)" onclick="switchAdminTab('transactions')" id="nav-transactions" class="nav-item">📜 Transactions</a>
+        <a href="javascript:void(0)" onclick="switchAdminTab('audit')" id="nav-audit" class="nav-item">📋 Audit Logs</a>
+        <a href="javascript:void(0)" onclick="switchAdminTab('reports')" id="nav-reports" class="nav-item">📈 Reports</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button onclick="handleLogout()" class="btn btn-secondary btn-block" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+          🚪 Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div>
+          <h2 style="font-size: 1.25rem;">SecureBank Administration</h2>
+          <span style="font-size: 0.85rem; color: var(--text-muted);">Welcome, <strong style="color: var(--primary-900);" id="adminWelcomeTitle">Administrator</strong></span>
+        </div>
+
+        <div class="user-profile-badge">
+          <div class="user-avatar" style="background: #fee2e2; color: #ef4444;">🛡️</div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.95rem;" id="adminUsername">Administrator</div>
+            <div style="font-size: 0.8rem; color: var(--danger); font-weight: 600;">ROLE_ADMIN</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Body -->
+      <main class="content-body">
+
+        <!-- 4 Key Aggregate Statistic Cards -->
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-label">Total Customers</div>
+            <div class="metric-value" id="statCustomers">1,248</div>
+            <div style="font-size: 0.75rem; color: var(--success); margin-top: 4px;">↑ +12% this month</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Active Accounts</div>
+            <div class="metric-value" id="statAccounts">1,196</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">96% compliance rate</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Total Bank Balance</div>
+            <div class="metric-value" style="color: var(--accent-600);" id="statVaultReserves">₹8,45,20,000</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Vault Liquidity Reserve</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Today's Transactions</div>
+            <div class="metric-value" style="color: var(--primary-800);" id="statTxnCount">327</div>
+            <div style="font-size: 0.75rem; color: var(--success); margin-top: 4px;">₹14.2L settlement volume</div>
+          </div>
+        </div>
+
+        <!-- ----------------------------------------------------------------- -->
+        <!-- TAB 1: DASHBOARD OVERVIEW                                         -->
+        <!-- ----------------------------------------------------------------- -->
+        <div id="tabContent-dashboard">
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
+            <!-- Quick System Health -->
+            <div class="content-card">
+              <div class="content-card-header">
+                <h3>🏦 Core Banking Engine Status</h3>
+                <span class="badge badge-success">Operational 99.99%</span>
+              </div>
+              <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+                All ledger databases, JDBC connection pools (HikariCP), and cryptographic JWT validation modules are operating within normal parameters.
+              </p>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem;">
+                <div style="background: #f8fafc; padding: 12px; border-radius: 6px;">
+                  <strong>Database Engine:</strong> PostgreSQL 15 (ACID Verified)
+                </div>
+                <div style="background: #f8fafc; padding: 12px; border-radius: 6px;">
+                  <strong>Authentication:</strong> Spring Security + JWT Bearer
+                </div>
+                <div style="background: #f8fafc; padding: 12px; border-radius: 6px;">
+                  <strong>Password Hashing:</strong> BCrypt Work-Factor 12
+                </div>
+                <div style="background: #f8fafc; padding: 12px; border-radius: 6px;">
+                  <strong>Transaction Isolation:</strong> Serializable Row Locks
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Action Shortcuts -->
+            <div class="content-card">
+              <div class="content-card-header">
+                <h3>Admin Actions</h3>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn btn-primary" onclick="switchAdminTab('customers')" style="text-align: left; padding: 10px 14px;">
+                  👥 Review Verified Customers
+                </button>
+                <button class="btn btn-secondary" onclick="switchAdminTab('accounts')" style="text-align: left; padding: 10px 14px;">
+                  🏦 Moderate / Freeze Accounts
+                </button>
+                <button class="btn btn-secondary" onclick="switchAdminTab('audit')" style="text-align: left; padding: 10px 14px;">
+                  📋 View Security Audit Trail
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ----------------------------------------------------------------- -->
+        <!-- TAB 2: CUSTOMERS DIRECTORY                                        -->
+        <!-- ----------------------------------------------------------------- -->
+        <div id="tabContent-customers" class="content-card" style="display: none;">
+          <div class="content-card-header">
+            <div>
+              <h3>👥 Verified Customer Directory</h3>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Registered customer records in database</span>
+            </div>
+            <input type="text" id="customerSearchInput" class="form-control" style="width: 260px; font-size: 0.85rem;" 
+                   placeholder="Search customers..." onkeyup="filterAdminCustomers()">
+          </div>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Customer ID</th>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Account Number</th>
+                  <th>Status</th>
+                  <th>Date Joined</th>
+                </tr>
+              </thead>
+              <tbody id="adminCustomersTableBody">
+                <tr><td colspan="6" style="text-align: center; padding: 24px;">Loading customer directory...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ----------------------------------------------------------------- -->
+        <!-- TAB 3: ACCOUNTS & MODERATION                                      -->
+        <!-- ----------------------------------------------------------------- -->
+        <div id="tabContent-accounts" class="content-card" style="display: none;">
+          <div class="content-card-header">
+            <div>
+              <h3>🏦 Master Account Ledger</h3>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Account governance, balance monitoring, and moderation</span>
+            </div>
+            <input type="text" id="accountSearchInput" class="form-control" style="width: 260px; font-size: 0.85rem;" 
+                   placeholder="Search accounts or owners..." onkeyup="filterAdminAccounts()">
+          </div>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Account Number</th>
+                  <th>Customer Owner</th>
+                  <th>Account Type</th>
+                  <th>Balance</th>
+                  <th>Available Funds</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminAccountsTableBody">
+                <tr><td colspan="7" style="text-align: center; padding: 24px;">Loading accounts...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ----------------------------------------------------------------- -->
+        <!-- TAB 4: TRANSACTIONS FEED                                          -->
+        <!-- ----------------------------------------------------------------- -->
+        <div id="tabContent-transactions" class="content-card" style="display: none;">
+          <div class="content-card-header">
+            <div>
+              <h3>📜 Bank-Wide Global Transactions</h3>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Real-time settlement and transaction logs</span>
+            </div>
+            <input type="text" id="globalTxnSearchInput" class="form-control" style="width: 260px; font-size: 0.85rem;" 
+                   placeholder="Search transactions..." onkeyup="filterAdminTransactions()">
+          </div>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Transaction ID</th>
+                  <th>Date</th>
+                  <th>Customer / Parties</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody id="adminTxnTableBody">
+                <tr><td colspan="7" style="text-align: center; padding: 24px;">Loading transaction stream...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ----------------------------------------------------------------- -->
+        <!-- TAB 5: AUDIT LOGS                                                 -->
+        <!-- ----------------------------------------------------------------- -->
+        <div id="tabContent-audit" class="content-card" style="display: none;">
+          <div class="content-card-header">
+            <div>
+              <h3>📋 System Security Audit Logs</h3>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Immutable audit log of user logins and critical banking actions</span>
+            </div>
+            <span class="badge badge-success">Audit Daemon Active</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Date / Time</th>
+                  <th>User / Identity</th>
+                  <th>Action</th>
+                  <th>Channel / IP</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="adminAuditTableBody">
+                <tr>
+                  <td>18 Aug 2026, 10:32 AM</td>
+                  <td><strong>admin@securebank.com</strong> (Admin)</td>
+                  <td><code>ADMIN_LOGIN</code></td>
+                  <td>127.0.0.1 (Web Portal)</td>
+                  <td><span class="badge badge-success">SUCCESS</span></td>
+                </tr>
+                <tr>
+                  <td>18 Aug 2026, 10:45 AM</td>
+                  <td><strong>akash@example.com</strong> (Customer)</td>
+                  <td><code>ACCOUNT_CREATED</code></td>
+                  <td>127.0.0.1 (Self-Service)</td>
+                  <td><span class="badge badge-success">SUCCESS</span></td>
+                </tr>
+                <tr>
+                  <td>18 Aug 2026, 11:02 AM</td>
+                  <td><strong>akash@example.com</strong> (Customer)</td>
+                  <td><code>CUSTOMER_LOGIN</code></td>
+                  <td>127.0.0.1 (Web Portal)</td>
+                  <td><span class="badge badge-success">SUCCESS</span></td>
+                </tr>
+                <tr>
+                  <td>18 Aug 2026, 11:15 AM</td>
+                  <td><strong>alice@securebank.com</strong> (Customer)</td>
+                  <td><code>FUNDS_TRANSFER</code></td>
+                  <td>127.0.0.1 (P2P Wire)</td>
+                  <td><span class="badge badge-success">SUCCESS</span></td>
+                </tr>
+                <tr>
+                  <td>18 Aug 2026, 11:28 AM</td>
+                  <td><strong>bob@securebank.com</strong> (Customer)</td>
+                  <td><code>CASH_WITHDRAWAL</code></td>
+                  <td>ATM Terminal #04</td>
+                  <td><span class="badge badge-success">SUCCESS</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ----------------------------------------------------------------- -->
+        <!-- TAB 6: REPORTS                                                    -->
+        <!-- ----------------------------------------------------------------- -->
+        <div id="tabContent-reports" class="content-card" style="display: none;">
+          <div class="content-card-header">
+            <div>
+              <h3>📈 Financial Reports & Compliance Summary</h3>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Quarterly liquidity reserves and asset quality ratios</span>
+            </div>
+            <button class="btn btn-secondary" onclick="showToast('Executive report downloaded (Demo format).', 'success')">📥 Export Report (PDF)</button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 16px;">
+            <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Capital Adequacy Ratio (CAR)</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: var(--success); margin-top: 4px;">16.4%</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Regulatory minimum: 11.5%</div>
+            </div>
+
+            <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Liquidity Coverage Ratio (LCR)</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-600); margin-top: 4px;">142.8%</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">High-Quality Liquid Assets (HQLA)</div>
+            </div>
+
+            <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Net Non-Performing Assets (NNPA)</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary-900); margin-top: 4px;">0.12%</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Pristine loan book health</div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="js/api.js?v=2.5"></script>
+  <script src="js/auth.js?v=2.5"></script>
+  <script src="js/admin.js?v=2.5"></script>
+</body>
+</html>

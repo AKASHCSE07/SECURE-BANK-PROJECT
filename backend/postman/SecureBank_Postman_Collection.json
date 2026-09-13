@@ -1,0 +1,166 @@
+{
+  "info": {
+    "name": "SecureBank REST API Test Suite",
+    "description": "Complete 11-Step Academic Test Suite for SecureBank Enterprise APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01. Customer Registration",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstName\": \"David\",\n  \"lastName\": \"Miller\",\n  \"email\": \"david.miller@example.com\",\n  \"password\": \"Password@123\",\n  \"pin\": \"4321\",\n  \"phone\": \"+1-555-8899\",\n  \"address\": \"100 Wall Street, NY\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/auth/register", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "register"] }
+      }
+    },
+    {
+      "name": "02. Customer Login (Obtain JWT)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "if (jsonData.data && jsonData.data.accessToken) {",
+              "    pm.environment.set(\"jwt_token\", jsonData.data.accessToken);",
+              "    pm.environment.set(\"user_id\", jsonData.data.userId);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"alice@securebank.com\",\n  \"password\": \"Cust@123\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/auth/login", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "login"] }
+      }
+    },
+    {
+      "name": "03. Get Customer Accounts",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+        "url": { "raw": "http://localhost:8080/api/accounts/customer/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "accounts", "customer", "1"] }
+      }
+    },
+    {
+      "name": "04. Deposit Funds",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"accountNumber\": \"SB-1001-SAV\",\n  \"amount\": 500.00,\n  \"description\": \"Payroll Bonus Direct Deposit\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/transactions/deposit", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "transactions", "deposit"] }
+      }
+    },
+    {
+      "name": "05. Withdraw Cash (With PIN)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"accountNumber\": \"SB-1001-SAV\",\n  \"amount\": 200.00,\n  \"pin\": \"1234\",\n  \"description\": \"Branch ATM Cash\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/transactions/withdraw", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "transactions", "withdraw"] }
+      }
+    },
+    {
+      "name": "06. Insufficient Balance Test (Should return 422)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"accountNumber\": \"SB-1001-SAV\",\n  \"amount\": 999999.00,\n  \"pin\": \"1234\",\n  \"description\": \"Impossible Withdrawal\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/transactions/withdraw", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "transactions", "withdraw"] }
+      }
+    },
+    {
+      "name": "07. Inter-Account Transfer (Alice to Bob)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sourceAccountNumber\": \"SB-1001-SAV\",\n  \"destinationAccountNumber\": \"SB-2001-CUR\",\n  \"amount\": 250.00,\n  \"pin\": \"1234\",\n  \"description\": \"Reimbursement for dinner\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/transfers", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "transfers"] }
+      }
+    },
+    {
+      "name": "08. Admin Login (Obtain Admin JWT)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "if (jsonData.data && jsonData.data.accessToken) {",
+              "    pm.environment.set(\"admin_token\", jsonData.data.accessToken);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@securebank.com\",\n  \"password\": \"Admin@123\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/auth/admin/login", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "admin", "login"] }
+      }
+    },
+    {
+      "name": "09. Admin View Statistics",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+        "url": { "raw": "http://localhost:8080/api/admin/statistics", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "admin", "statistics"] }
+      }
+    },
+    {
+      "name": "10. Admin Freeze Account (Block)",
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+        "url": { "raw": "http://localhost:8080/api/admin/accounts/SB-2001-CUR/block", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "admin", "accounts", "SB-2001-CUR", "block"] }
+      }
+    },
+    {
+      "name": "11. Transaction History (Account Statement)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+        "url": { "raw": "http://localhost:8080/api/transactions/account/SB-1001-SAV", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "transactions", "account", "SB-1001-SAV"] }
+      }
+    }
+  ]
+}

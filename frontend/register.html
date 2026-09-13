@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureBank | Open an Account</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div id="toast-container"></div>
+
+  <div class="auth-wrapper">
+    <!-- Registration Form Card -->
+    <div class="auth-card" id="registerCard" style="max-width: 580px;">
+      <div class="auth-header">
+        <a href="index.html" class="auth-logo">🛡️ Secure<span>Bank</span></a>
+        <p class="auth-subtitle">Open a Verified Digital Banking Account in Minutes</p>
+      </div>
+
+      <div class="auth-body">
+        <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" class="form-control" placeholder="e.g. Akash" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" class="form-control" placeholder="e.g. Sharma" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" class="form-control" placeholder="e.g. akash@example.com" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label for="password">Login Password (min 8 chars)</label>
+              <input type="password" id="password" class="form-control" placeholder="••••••••" minlength="8" required>
+            </div>
+            <div class="form-group">
+              <label for="pin">Transaction PIN (4-6 digits)</label>
+              <input type="password" id="pin" class="form-control" placeholder="1234" pattern="^[0-9]{4,6}$" maxlength="6" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" class="form-control" placeholder="+91 98765 43210" required>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Residential Address</label>
+            <input type="text" id="address" class="form-control" placeholder="Flat / House No, Street, City" required>
+          </div>
+
+          <button type="submit" id="registerBtn" class="btn btn-primary btn-block" style="margin-top: 16px;">
+            Complete Account Opening
+          </button>
+        </form>
+      </div>
+
+      <div class="auth-footer">
+        Already registered? <a href="login.html" style="font-weight: 600;">Sign in to your account</a>
+      </div>
+    </div>
+
+    <!-- Account Created Success Card -->
+    <div class="auth-card" id="successCard" style="display: none; max-width: 580px; text-align: center;">
+      <div class="auth-header">
+        <div style="width: 64px; height: 64px; background: rgba(16, 185, 129, 0.1); color: #10b981; font-size: 2rem; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; border: 2px solid rgba(16, 185, 129, 0.2);">
+          ✓
+        </div>
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--primary-900); margin-bottom: 6px;">Account Created Successfully</h2>
+        <p class="auth-subtitle" id="successWelcomeMsg" style="font-size: 1rem; color: #475569;">Welcome to SecureBank, <span id="successFirstName" style="font-weight: 700; color: var(--primary-900);">Customer</span>.</p>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 4px;">Your digital banking account has been created successfully.</p>
+      </div>
+
+      <div class="auth-body" style="padding-top: 8px;">
+        <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; text-align: left; margin-bottom: 24px;">
+          <div style="margin-bottom: 12px;">
+            <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; display: block;">Account Number</span>
+            <strong style="font-size: 1.25rem; color: var(--accent-600); font-family: monospace; letter-spacing: 1px;" id="successAccNo">SB-XXXXXXXX</strong>
+          </div>
+          <div>
+            <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; display: block;">Registered Email</span>
+            <span style="font-size: 0.95rem; color: var(--primary-900); font-weight: 600;" id="successEmail">user@example.com</span>
+          </div>
+        </div>
+
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">
+          Your account is ready to use. Click below to sign in with your credentials.
+        </p>
+
+        <a href="login.html" class="btn btn-primary btn-block" style="text-decoration: none; padding: 12px; font-size: 1rem;">
+          Sign In to Your Account
+        </a>
+      </div>
+
+      <div class="auth-footer" style="font-size: 0.85rem; color: var(--text-muted);">
+        🛡️ SecureBank Enterprise Grade Security • 256-bit AES Encryption
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js?v=2.5"></script>
+  <script src="js/auth.js?v=2.5"></script>
+</body>
+</html>

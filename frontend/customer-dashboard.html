@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureBank | Customer Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div id="toast-container"></div>
+
+  <div class="dashboard-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        🛡️ Secure<span>Bank</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="javascript:void(0)" onclick="switchCustomerTab('overview')" id="nav-overview" class="nav-item active">📊 Dashboard</a>
+        <a href="javascript:void(0)" onclick="switchCustomerTab('profile')" id="nav-profile" class="nav-item">👤 My Account</a>
+        <a href="javascript:void(0)" onclick="switchCustomerTab('transactions')" id="nav-transactions" class="nav-item">📜 Transactions</a>
+        <a href="javascript:void(0)" onclick="openModal('transferModal')" class="nav-item">💸 Transfer Money</a>
+        <a href="javascript:void(0)" onclick="openModal('depositModal')" class="nav-item">💳 Deposit</a>
+        <a href="javascript:void(0)" onclick="openModal('withdrawModal')" class="nav-item">🏧 Withdraw</a>
+        <a href="javascript:void(0)" onclick="openModal('beneficiaryModal')" class="nav-item">👥 Beneficiaries</a>
+        <a href="javascript:void(0)" onclick="openModal('newAccountModal')" class="nav-item">➕ Open Account</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button onclick="handleLogout()" class="btn btn-secondary btn-block" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+          🚪 Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div>
+          <h2 style="font-size: 1.25rem; display: flex; align-items: center; gap: 8px;">
+            <span>Welcome, <span id="welcomeHeaderName" style="color: var(--accent-600);">Customer</span></span>
+          </h2>
+          <span style="font-size: 0.85rem; color: var(--text-muted);" id="currentDateDisplay"></span>
+        </div>
+
+        <div class="user-profile-badge" onclick="switchCustomerTab('profile')" style="cursor: pointer;" title="Click to view Profile">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.95rem;" id="userFullName">Loading...</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);" id="userEmail">Loading...</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Content Body -->
+      <main class="content-body">
+
+        <!-- ================================================================= -->
+        <!-- TAB 1: OVERVIEW / DASHBOARD                                       -->
+        <!-- ================================================================= -->
+        <div id="tabContent-overview">
+          <!-- Account Selector & Header Summary -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <label for="accountSelect" style="font-weight: 600; font-size: 0.875rem; color: var(--text-muted);">ACTIVE ACCOUNT:</label>
+              <select id="accountSelect" class="form-control" style="width: auto; display: inline-block; margin-left: 8px;" onchange="handleAccountChange()">
+                <option value="">Loading accounts...</option>
+              </select>
+            </div>
+            <button class="btn btn-secondary" onclick="refreshDashboardData()">🔄 Refresh Live Data</button>
+          </div>
+
+          <!-- Balance Hero Card (Mockup Match) -->
+          <div class="account-hero-card">
+            <div style="flex: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <div class="balance-label" id="accountTypeBadge">SAVINGS ACCOUNT</div>
+                <span class="badge badge-success" id="accountStatusBadge" style="padding: 5px 14px; font-size: 0.85rem; font-weight: 700; border-radius: 20px; background: #22c55e; color: #ffffff;">ACTIVE</span>
+              </div>
+              <div class="balance-amount" id="balanceDisplay">₹1,25,000.00</div>
+              <div class="hero-acc-details">
+                <span>Account Number: <strong id="accountNumberDisplay">SB-1001-SAV</strong></span>
+                <span style="opacity: 0.5;">|</span>
+                <span style="font-size: 0.85rem; color: #94a3b8;" id="overdraftInfoText">Available: <span style="color: #38bdf8; font-weight: 700;" id="availableFundsDisplay">₹1,25,000.00</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons Row (Matching Preview) -->
+          <div class="quick-action-pills">
+            <button class="action-pill-btn primary" onclick="openModal('transferModal')">
+              <span>⇄</span> Transfer
+            </button>
+            <button class="action-pill-btn" onclick="openModal('depositModal')">
+              <span>⤓</span> Deposit
+            </button>
+            <button class="action-pill-btn" onclick="openModal('withdrawModal')">
+              <span>⤒</span> Withdraw
+            </button>
+            <button class="action-pill-btn" onclick="openModal('beneficiaryModal')">
+              <span>👥</span> Beneficiaries
+            </button>
+            <button class="action-pill-btn" onclick="openModal('newAccountModal')">
+              <span>➕</span> Open Account
+            </button>
+          </div>
+
+          <!-- Recent Transactions Table Section -->
+          <div class="content-card">
+            <div class="content-card-header">
+              <div>
+                <h3>Recent Account Transactions</h3>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Recent activity on your active account</span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <input type="text" id="txnSearchInput" class="form-control" style="width: 200px; padding: 6px 12px; font-size: 0.85rem;" 
+                       placeholder="Search transactions..." onkeyup="filterTransactionsLocally()">
+                <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;" onclick="switchCustomerTab('transactions')">
+                  View All Transactions
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Date / Time</th>
+                    <th>Ref Number</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Flow</th>
+                    <th>Amount</th>
+                    <th>Balance After</th>
+                  </tr>
+                </thead>
+                <tbody id="transactionsTableBody">
+                  <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">
+                      Loading recent transaction history...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- TAB 2: MY ACCOUNT / PROFILE                                       -->
+        <!-- ================================================================= -->
+        <div id="tabContent-profile" style="display: none;">
+          <div class="content-card">
+            <div class="content-card-header">
+              <div>
+                <h3>👤 Customer Profile & Account Information</h3>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Verified digital identity and registered details</span>
+              </div>
+              <span class="badge badge-success" style="font-size: 0.85rem; padding: 6px 12px;">✓ Verified Customer</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 16px;">
+              <div style="background: #f8fafc; padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">First Name</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: var(--primary-900); margin-top: 4px;" id="profileFirstName">---</div>
+              </div>
+
+              <div style="background: #f8fafc; padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Last Name</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: var(--primary-900); margin-top: 4px;" id="profileLastName">---</div>
+              </div>
+
+              <div style="background: #f8fafc; padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Registered Email</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: var(--primary-900); margin-top: 4px;" id="profileEmail">---</div>
+              </div>
+
+              <div style="background: #f8fafc; padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Phone Number</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: var(--primary-900); margin-top: 4px;" id="profilePhone">---</div>
+              </div>
+
+              <div style="background: #f8fafc; padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Primary Account Number</div>
+                <div style="font-size: 1.2rem; font-weight: 800; color: var(--accent-600); font-family: monospace; margin-top: 4px;" id="profileAccountNo">---</div>
+              </div>
+
+              <div style="background: #f8fafc; padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Account Status</div>
+                <div style="margin-top: 4px;"><span class="badge badge-success" id="profileStatus">ACTIVE</span></div>
+              </div>
+
+              <div style="background: #f8fafc; padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color); grid-column: 1 / -1;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Residential Address</div>
+                <div style="font-size: 1rem; color: var(--primary-900); font-weight: 600; margin-top: 4px;" id="profileAddress">---</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- TAB 3: FULL TRANSACTIONS STATEMENT                                -->
+        <!-- ================================================================= -->
+        <div id="tabContent-transactions" style="display: none;">
+          <div class="content-card">
+            <div class="content-card-header">
+              <div>
+                <h3>📜 Complete Account Statement</h3>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Audited transaction ledger for account: <strong id="statementAccNo">SB-1001-SAV</strong></span>
+              </div>
+              <input type="text" id="fullTxnSearchInput" class="form-control" style="width: 240px; padding: 6px 12px; font-size: 0.85rem;" 
+                     placeholder="Search all records..." onkeyup="filterFullTransactionsLocally()">
+            </div>
+
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Date / Time</th>
+                    <th>Transaction ID</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Flow</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Balance After</th>
+                  </tr>
+                </thead>
+                <tbody id="fullTransactionsTableBody">
+                  <tr>
+                    <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">
+                      Loading complete transaction statement...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- FINANCIAL WORKFLOW MODALS                                                 -->
+  <!-- ========================================================================= -->
+
+  <!-- 1. DEPOSIT MODAL -->
+  <div class="modal-overlay" id="depositModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>💳 Deposit Money</h3>
+        <button onclick="closeModal('depositModal')" style="background:none;border:none;font-size:1.4rem;cursor:pointer;">&times;</button>
+      </div>
+      <form onsubmit="handleDepositSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Target Account</label>
+            <input type="text" id="depositAccNumber" class="form-control" readonly>
+          </div>
+          <div class="form-group">
+            <label for="depositAmount">Deposit Amount ($)</label>
+            <input type="number" id="depositAmount" class="form-control" step="0.01" min="0.01" placeholder="e.g. 500.00" required>
+          </div>
+          <div class="form-group">
+            <label for="depositDesc">Description / Memo</label>
+            <input type="text" id="depositDesc" class="form-control" value="Direct Deposit" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('depositModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="depositBtn">Confirm Deposit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. WITHDRAWAL MODAL -->
+  <div class="modal-overlay" id="withdrawModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🏧 Cash Withdrawal</h3>
+        <button onclick="closeModal('withdrawModal')" style="background:none;border:none;font-size:1.4rem;cursor:pointer;">&times;</button>
+      </div>
+      <form onsubmit="handleWithdrawSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Source Account</label>
+            <input type="text" id="withdrawAccNumber" class="form-control" readonly>
+          </div>
+          <div class="form-group">
+            <label for="withdrawAmount">Withdrawal Amount ($)</label>
+            <input type="number" id="withdrawAmount" class="form-control" step="0.01" min="0.01" placeholder="e.g. 200.00" required>
+          </div>
+          <div class="form-group">
+            <label for="withdrawPin">Transaction PIN (Step-Up Auth)</label>
+            <input type="password" id="withdrawPin" class="form-control" placeholder="••••" maxlength="6" required>
+          </div>
+          <div class="form-group">
+            <label for="withdrawDesc">Description</label>
+            <input type="text" id="withdrawDesc" class="form-control" value="ATM Cash Withdrawal" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('withdrawModal')">Cancel</button>
+          <button type="submit" class="btn btn-danger" id="withdrawBtn">Authorize Withdrawal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. TRANSFER MODAL -->
+  <div class="modal-overlay" id="transferModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>💸 Peer-to-Peer Transfer</h3>
+        <button onclick="closeModal('transferModal')" style="background:none;border:none;font-size:1.4rem;cursor:pointer;">&times;</button>
+      </div>
+      <form onsubmit="handleTransferSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Source Account</label>
+            <input type="text" id="transferSourceAcc" class="form-control" readonly>
+          </div>
+          <div class="form-group">
+            <label for="transferBeneficiarySelect">Quick Select Saved Beneficiary</label>
+            <select id="transferBeneficiarySelect" class="form-control" onchange="handleBeneficiarySelect(this)">
+              <option value="">-- Choose Beneficiary or Enter Manually Below --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="transferDestAcc">Destination Account Number</label>
+            <input type="text" id="transferDestAcc" class="form-control" placeholder="e.g. SB-2001-CUR" required>
+          </div>
+          <div class="form-group">
+            <label for="transferAmount">Transfer Amount ($)</label>
+            <input type="number" id="transferAmount" class="form-control" step="0.01" min="0.01" placeholder="e.g. 350.00" required>
+          </div>
+          <div class="form-group">
+            <label for="transferPin">Transaction PIN (Step-Up Auth)</label>
+            <input type="password" id="transferPin" class="form-control" placeholder="••••" maxlength="6" required>
+          </div>
+          <div class="form-group">
+            <label for="transferDesc">Transfer Memo / Description</label>
+            <input type="text" id="transferDesc" class="form-control" value="Wire Transfer" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('transferModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="transferBtn">Execute Transfer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. BENEFICIARY MANAGEMENT MODAL -->
+  <div class="modal-overlay" id="beneficiaryModal">
+    <div class="modal-card" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3>👥 Saved Beneficiaries</h3>
+        <button onclick="closeModal('beneficiaryModal')" style="background:none;border:none;font-size:1.4rem;cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Add Beneficiary Sub-Form -->
+        <form onsubmit="handleAddBeneficiarySubmit(event)" style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color);">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label for="benName">Payee Name</label>
+              <input type="text" id="benName" class="form-control" placeholder="e.g. Bob Smith" required>
+            </div>
+            <div class="form-group">
+              <label for="benAccNo">Account Number</label>
+              <input type="text" id="benAccNo" class="form-control" placeholder="e.g. SB-2001-CUR" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-secondary btn-block" style="margin-top: 8px;">➕ Add New Beneficiary</button>
+        </form>
+
+        <h4 style="font-size: 0.95rem; margin-bottom: 12px;">Your Saved Payees</h4>
+        <div id="beneficiariesList" style="max-height: 200px; overflow-y: auto;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. OPEN NEW ACCOUNT MODAL -->
+  <div class="modal-overlay" id="newAccountModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>➕ Open Additional Bank Account</h3>
+        <button onclick="closeModal('newAccountModal')" style="background:none;border:none;font-size:1.4rem;cursor:pointer;">&times;</button>
+      </div>
+      <form onsubmit="handleOpenAccountSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="newAccType">Account Type</label>
+            <select id="newAccType" class="form-control">
+              <option value="SAVINGS">Savings Account ($500 Minimum Balance)</option>
+              <option value="CURRENT">Current Account ($1,000 Overdraft Protection)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="newAccInitialDeposit">Initial Opening Deposit ($)</label>
+            <input type="number" id="newAccInitialDeposit" class="form-control" step="0.01" min="0.00" value="500.00" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('newAccountModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="openAccBtn">Create Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js?v=2.5"></script>
+  <script src="js/auth.js?v=2.5"></script>
+  <script src="js/dashboard.js?v=2.5"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureBank | Enterprise Digital Banking</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .hero-section {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
+      padding: 100px 0;
+      text-align: center;
+    }
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+    .hero-title span { color: var(--accent-500); }
+    .hero-desc {
+      font-size: 1.2rem;
+      color: #94a3b8;
+      max-width: 680px;
+      margin: 0 auto 36px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin: 60px 0;
+    }
+    .feature-card {
+      background: #ffffff;
+      padding: 32px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header class="topbar">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <div class="auth-logo" style="margin: 0;">
+        🛡️ Secure<span>Bank</span>
+      </div>
+      <nav style="display: flex; gap: 16px;">
+        <a href="login.html" class="btn btn-secondary">Sign In</a>
+        <a href="register.html" class="btn btn-primary">Open Account</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <h1 class="hero-title">Next-Generation <span>Digital Banking</span> Engine</h1>
+      <p class="hero-desc">
+        Experience real-time atomic fund transfers, double-entry ledger security, and institutional-grade encryption with SecureBank.
+      </p>
+      <div style="display: flex; justify-content: center; gap: 16px;">
+        <a href="register.html" class="btn btn-primary" style="padding: 14px 28px; font-size: 1.05rem;">Get Started Online</a>
+        <a href="login.html" class="btn btn-secondary" style="padding: 14px 28px; font-size: 1.05rem; background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2);">Portal Login</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Highlights -->
+  <main class="container">
+    <div class="features-grid">
+      <div class="feature-card">
+        <div style="font-size: 2rem; margin-bottom: 12px;">⚡</div>
+        <h3>Instant P2P Transfers</h3>
+        <p style="color: var(--text-muted); margin-top: 8px;">
+          Execute atomic account-to-account fund transfers with zero race conditions and instant confirmation.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div style="font-size: 2rem; margin-bottom: 12px;">🔒</div>
+        <h3>Step-Up PIN Security</h3>
+        <p style="color: var(--text-muted); margin-top: 8px;">
+          All debit operations are protected with salted BCrypt Transaction PIN verification and JWT tokens.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div style="font-size: 2rem; margin-bottom: 12px;">📊</div>
+        <h3>Double-Entry Statements</h3>
+        <p style="color: var(--text-muted); margin-top: 8px;">
+          Generate immutable, filterable transaction statements and track financial inflow and outflow in real time.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <footer style="text-align: center; padding: 32px 0; color: var(--text-muted); border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p>&copy; 2026 SecureBank Enterprise. All rights reserved. Academic Full-Stack Banking Project.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

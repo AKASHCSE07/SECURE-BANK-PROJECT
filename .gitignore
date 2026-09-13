@@ -1,0 +1,64 @@
+# ==============================================================================
+# SECUREBANK ENTERPRISE GITIGNORE
+# ==============================================================================
+
+# Compiled Java Bytecode & Build Artifacts
+target/
+bin/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+
+# Maven Logs & Cache
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IntelliJ IDEA Metadata
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+# Eclipse IDE Metadata
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# VS Code Metadata
+.vscode/
+*.code-workspace
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Log Files & Runtime Statement Exports
+*.log
+data/ledger.csv
+data/statements/
+logs/
+
+# Sensitive Environment Files
+.env
+.env.local
